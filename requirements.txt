@@ -4,3 +4,5 @@ blobfile
 mpi4py
 pandas
 matplotlib
+pyyaml
+tqdm

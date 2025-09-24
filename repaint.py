@@ -33,7 +33,7 @@ from guided_diffusion.image_datasets import load_data
 from PIL import Image
 import blobfile as bf
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
+# from sklearn.metrics import mean_squared_error
 from copy import deepcopy
 import json
 from time import time
@@ -57,6 +57,13 @@ from guided_diffusion.script_util_repaint import (
 )  # noqa: E402
 
 print("Imports Complete...")
+
+if not os.path.isdir("repaint_data"):
+    os.mkdir("repaint_data")
+subdirs = ["masks","images"]
+for s in subdirs:
+    if not os.path.isdir(f"repaint_data/{s}"):
+        os.mkdir(f"repaint_data/{s}")
 
 def toU8(sample):
     if sample is None:
