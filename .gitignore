@@ -1,3 +1,6 @@
+# Astro-Repaint Specifics
+training_ds-*/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
