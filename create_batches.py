@@ -23,12 +23,12 @@ np.random.seed(0)
 random.seed(0)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--catalogue','-c',required=True,type=str, default=None)
-parser.add_argument('--tile','-t',required=False,type=int, default=None)
-parser.add_argument('--batchsize','-bs',type=int, default=128)
-parser.add_argument('--processes','-p',type=int, default=8)
-parser.add_argument('--batch_dir','-bd',type=str, default="batches")
-parser.add_argument('--tile_dir','-td',type=str, default="tiles")
+parser.add_argument('--catalogue','-c',required=True,type=str, default=None, help="A fits file containing the ids, ra, dec and tile_ids for all the sources you want in your dataset.")
+parser.add_argument('--tile','-t',required=False,type=int, default=None, help="The specific tile you want to generate cutouts for sources within --catalogue. Creating batches from single tiles may impact training due to irregularities in tiles being transferred across whole batches and so is only recommended for inference." )
+parser.add_argument('--batchsize','-bs',type=int, default=1024, help="The number of cutouts within each .npy file. If tiles are missing then .npy will contain at most --batchsize cutouts but most will contain less. This does not affect diffusion pipeline.")
+parser.add_argument('--processes','-p',type=int, default=32, help="The number of separate processes to run to create .npy files. More will run faster. If --processes is larger than possible for your system, it will automatically reduce the number to a more suitable amount.")
+parser.add_argument('--batch_dir','-bd',type=str, default="data", help="The directory where all your .npy files will be saved.")
+parser.add_argument('--tile_dir','-td',type=str, default="tiles", help="The directory where all your .fits tiles are located.")
 
 args = parser.parse_args()
 
