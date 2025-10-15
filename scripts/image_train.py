@@ -29,29 +29,6 @@ def main():
     args.training_dir = logger.get_dir()
     print(args)
 
-    # assert False
-    # data = load_data(
-    #     data_dir=args.data_dir,
-    #     batch_size=args.batch_size,
-    #     image_size=args.image_size,
-    #     class_cond=args.class_cond,
-    # )
-    # import matplotlib.pyplot as plt
-    # from copy import deepcopy
-    # import cv2
-    # import numpy as np
-    # for i,j in data:
-    #     for k_idx,k in enumerate(i):
-    #         norm_image = cv2.normalize(k.permute(1, 2, 0).cpu().numpy(), None, alpha = 0, beta = 255, norm_type = cv2.NORM_MINMAX, dtype = cv2.CV_32F)
-
-    #         norm_image = norm_image.astype(np.uint8)
-    #         # print(img.permute(1, 2, 0).shape)
-    #         cv2.imwrite(f"../RePaint/data/datasets/gts/galaxys/{k_idx}.png", norm_image) 
-
-
-
-    #     assert False
-    # print(args)
     model, diffusion = create_model_and_diffusion(args=args,
         **args_to_dict(args, model_and_diffusion_defaults().keys())
     )
@@ -70,10 +47,7 @@ def main():
     )
 
     logger.log("training...")
-    # print(model)
-    # from torchsummary import summary
-    # print(model)
-    # assert False
+
     TrainLoop(
         model=model,
         diffusion=diffusion,
@@ -121,7 +95,6 @@ def create_argparser():
     partial_args, _ = parser.parse_known_args()
     conf = yamlread(partial_args.conf_path)
     parser.add_argument('--dataset_dir', type=str, default=conf["data"]["loc"][partial_args.dataset])
-    # parser.add_argument('--loss_function', type=str, default="default",choices=["default","1_over_pixel","min_max","huber"])
 
     return parser
 

@@ -458,13 +458,13 @@ def setup(t_T = None, js = None, jl = None, inpaint_size = None):
     print("Initialising Argparse...")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--conf_path', type=str, required=False, default='confs/galaxy.yml')
-    parser.add_argument('--inpaint_size','-is', type=int, required=False, default=5)
-    parser.add_argument('--t_T','-t', type=int, required=False, default=60)
-    parser.add_argument('--jump_n_sample','-js', type=int, required=False, default=3)
-    parser.add_argument('--jump_length','-jl', type=int, required=False, default=1)
-    parser.add_argument('--diffusion_test','-dt', type=bool, required=False, default=False)
-    parser.add_argument('--batch_size','-bs', type=int, required=False, default=1024)
+    parser.add_argument('--conf_path', type=str, required=False, default='confs/galaxy.yml', help="Path to configuration file.")
+    parser.add_argument('--inpaint_size','-is', type=int, required=False, default=5, help="The size of the square mask used for inpainting.")
+    parser.add_argument('--t_T','-t', type=int, required=False, default=60, help="The number of inference timesteps. Larger numbers will produce more resiliant outputs but will take longer per batch.")
+    parser.add_argument('--jump_n_sample','-js', type=int, required=False, default=3, help="The number of resamples made in the repaint process (see repaint paper for details). Larger numbers will produce more resiliant outputs but will take longer per batch.")
+    parser.add_argument('--jump_length','-jl', type=int, required=False, default=1, help="The number of steps jumped before resampling. Smaller numbers will produce more resiliant outputs but will take longer per batch.")
+    parser.add_argument('--diffusion_test','-dt', type=bool, required=False, default=False, help="A flag for testing the diffusion model on more extreme masks. This is only recommended for testing.")
+    parser.add_argument('--batch_size','-bs', type=int, required=False, default=1024, help="The number of images to inpaint at once in an iteration. Memory is main bottleneck for inference and so only increase if you have sufficient GPU Memory.")
 
     args, _ = parser.parse_known_args()
 
