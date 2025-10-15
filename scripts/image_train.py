@@ -15,6 +15,8 @@ from guided_diffusion.script_util import (
 )
 from guided_diffusion.train_util import TrainLoop
 from utils import yamlread
+import torch.distributed as dist
+
 
 def main():
     args = create_argparser().parse_args()
@@ -22,6 +24,12 @@ def main():
     # assert False
 
     dist_util.setup_dist()
+
+    comm = None
+    if dist.is_available() and dist.is_initialized() and dist.get_world_size() > 1:
+        comm = dist_util.TorchComm()
+
+    
     logger.configure(dir=f"./training_ds-{args.dataset}_dp-{args.data_processing}_ls-{args.loss_function}")
 
     logger.log("creating model and diffusion...")

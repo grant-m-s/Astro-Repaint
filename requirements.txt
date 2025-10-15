@@ -1,8 +1,8 @@
 torch
 torchvision
 blobfile
-mpi4py
-pandas
 matplotlib
 pyyaml
 tqdm
+astropy
+panel==1.8.1
