@@ -23,16 +23,20 @@ np.random.seed(0)
 random.seed(0)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-c','--catalogue',required=True,type=str, default=None)
-parser.add_argument('-t','--tile',required=False,type=int, default=None)
-parser.add_argument('-bs','--batchsize',type=int, default=128)
-parser.add_argument('-p','--processes',type=int, default=8)
+parser.add_argument('--catalogue','-c',required=True,type=str, default=None)
+parser.add_argument('--tile','-t',required=False,type=int, default=None)
+parser.add_argument('--batchsize','-bs',type=int, default=128)
+parser.add_argument('--processes','-p',type=int, default=8)
+parser.add_argument('--batch_dir','-bd',type=str, default="batches")
+parser.add_argument('--tile_dir','-td',type=str, default="tiles")
 
 args = parser.parse_args()
 
-batch_dir = 'batches'
+print(args.batch_dir)
+print(args.tile_dir)
 
-tiles_path = 'tiles'
+
+os.makedirs(args.batch_dir, exist_ok=True)
 
 cols_to_keep = ["object_id_euclid", 
                 "tile_index_euclid", 
@@ -46,12 +50,12 @@ def to_mag(F):
     return -2.5*np.log10(F)+23.9
 
 def get_tile_short_dict():
-    paths = Path(tiles_path).rglob('*.fits')
+    paths = Path(args.tile_dir).rglob('*.fits')
     pathlist = [str(x) for x in paths]
     # print(pathlist)
 
     tile_short = {}
-    path_len = len(tiles_path)
+    path_len = len(args.tile_dir)
     for i in pathlist:
         
         short = i[path_len+30:path_len+39]
@@ -144,14 +148,14 @@ def save_batches_from_tiles(cat_subset, split, chunk_id, total_chunks, batches_p
         source_ids[f"{b_idx}"].append(str(r["object_id_euclid"].value[0]))
 
         if len(batch) == args.batchsize:
-            with open(f'{batch_dir}/{b_idx}.npy', 'wb') as f:
+            with open(f'{args.batch_dir}/{b_idx}.npy', 'wb') as f:
                 np.save(f, batch)
 
             if total_chunks > 1:
-                with open(f'{batch_dir}/batch_sources_{chunk_id}.json', 'w') as f:
+                with open(f'{args.batch_dir}/batch_sources_{chunk_id}.json', 'w') as f:
                     dump(source_ids, f, indent=2)
             else:
-                with open(f'{batch_dir}/batch_sources_full.json', 'w') as f:
+                with open(f'{args.batch_dir}/batch_sources_full.json', 'w') as f:
                     dump(source_ids, f, indent=2)
 
             b_idx += 1
@@ -164,14 +168,14 @@ def save_batches_from_tiles(cat_subset, split, chunk_id, total_chunks, batches_p
         else:
             continue
 
-    with open(f'{batch_dir}/{b_idx}.npy', 'wb') as f:
+    with open(f'{args.batch_dir}/{b_idx}.npy', 'wb') as f:
         np.save(f, batch)
         # print(f"{chunk_id} saving {b_idx}")
     if total_chunks > 1:
-        with open(f'{batch_dir}/batch_sources_{chunk_id}.json', 'w') as f:
+        with open(f'{args.batch_dir}/batch_sources_{chunk_id}.json', 'w') as f:
             dump(source_ids, f, indent=2)
     else:
-        with open(f'{batch_dir}/batch_sources_full.json', 'w') as f:
+        with open(f'{args.batch_dir}/batch_sources_full.json', 'w') as f:
             dump(source_ids, f, indent=2)
 
     return sum([len(source_ids[k]) for k in source_ids]), image_errors, missing_tile_ids
@@ -206,11 +210,11 @@ def process_chunk(chunk_id, total_chunks, sources_id):
 
 if args.tile is not None:
     
-    assert f"{args.tile}" in list(tile_short.keys()), f"{args.tile} not in {tiles_path}"
+    assert f"{args.tile}" in list(tile_short.keys()), f"{args.tile} not in {args.tile_dir}"
 
     sources_id = [x["object_id_euclid"] for x in data if x["tile_index_euclid"] == args.tile]
 
-    assert len(sources_id), f"TILE {args.tile} does not contain any sources from {args.catalogue}"
+    assert len(sources_id), f"TILE {args.tile_dir} does not contain any sources from {args.catalogue}"
 
     print(f"TILE {args.tile} contains {len(sources_id)} sources from {args.catalogue}\n")
 
@@ -254,7 +258,7 @@ with mp.Pool(processes=num_processes) as pool:
 
         print("\nAll processes completed successfully\n")
 
-        json_files_all = Path(batch_dir).rglob('*.json')
+        json_files_all = Path(args.batch_dir).rglob('*.json')
         json_files = [str(x) for x in json_files_all if "_full" not in str(x)]
 
         combined_dict = {}
@@ -276,7 +280,7 @@ with mp.Pool(processes=num_processes) as pool:
                 combined_dict[j] = new_list
 
 
-        with open(f'{batch_dir}/batch_sources_full.json','w') as fp:
+        with open(f'{args.batch_dir}/batch_sources_full.json','w') as fp:
             dump(combined_dict,fp, indent=2)
 
         full_json_amount = sum([len(combined_dict[k]) for k in combined_dict])

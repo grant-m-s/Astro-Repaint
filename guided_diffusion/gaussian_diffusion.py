@@ -825,7 +825,7 @@ class GaussianDiffusion:
                 terms["comb"] = terms["mse"]
     
             elif self.args.loss_function == "1_over_pixel":
-                print("loss=1_over_pixel")
+                # print("loss=1_over_pixel")
                 # print(x_start.shape)
                 # print(target.shape)
                 # print(model_output.shape)

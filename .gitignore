@@ -1,5 +1,6 @@
 # Astro-Repaint Specifics
 training_ds-*/
+repaint_data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

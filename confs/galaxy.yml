@@ -69,6 +69,9 @@ schedule_jump_params:
   jump_length: 15 ## more is faster
   jump_n_sample: 1 ## more is slower
 data:
+  loc:
+    default: "data"
+    no_pointlike: "data/no_pointlike"
   eval:
     paper_face_mask:
       inpaint_size: 5
@@ -82,7 +85,7 @@ data:
       random_flip: false
       return_dict: true
       drop_last: false
-      batch_size: 1
+      npy_files_at_once: 1
       return_dataloader: true
       offset: 0
       max_len: 10000

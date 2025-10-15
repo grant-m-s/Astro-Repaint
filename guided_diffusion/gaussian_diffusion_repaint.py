@@ -638,8 +638,8 @@ class GaussianDiffusion:
                 time_pairs = tqdm(time_pairs)
 # 743,542,563,628
             shown = {}
-            saving_dir = "/home/grant/Diffusion_AGN/gif_images"
-            os.makedirs(saving_dir, exist_ok=True)
+            # saving_dir = "/home/grant/Diffusion_AGN/gif_images"
+            # os.makedirs(saving_dir, exist_ok=True)
             for t_last, t_cur in time_pairs:
 
                 # print(t_last,t_cur)
@@ -713,8 +713,8 @@ class GaussianDiffusion:
                         else:
                             shown[t_cur] += 1
                         
-                        for j in [743,542,563,628]:
-                            save_image(image_after_step[j,0].cpu(), f"{saving_dir}/{t_cur}_{j}_{shown[t_cur]}.png")
+                        # for j in [743,542,563,628]:
+                        #     save_image(image_after_step[j,0].cpu(), f"{saving_dir}/{t_cur}_{j}_{shown[t_cur]}.png")
                         # plt.close()
 
     

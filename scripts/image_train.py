@@ -14,14 +14,10 @@ from guided_diffusion.script_util import (
     add_dict_to_argparser,
 )
 from guided_diffusion.train_util import TrainLoop
-
+from utils import yamlread
 
 def main():
     args = create_argparser().parse_args()
-    d_set_locs = {
-        "default":"/shared/cutouts_benchmarking/batches",
-        "no_pointlike":"/shared/cutouts_benchmarking/batches/no_pointlike"
-    }
 
     # assert False
 
@@ -30,7 +26,6 @@ def main():
 
     logger.log("creating model and diffusion...")
 
-    args.dataset_dir = d_set_locs[args.dataset]
     args.training_dir = logger.get_dir()
     print(args)
 
@@ -101,7 +96,6 @@ def main():
 
 def create_argparser():
     defaults = dict(
-        data_dir="",
         schedule_sampler="uniform",
         lr=1e-4,
         weight_decay=0.0,
@@ -122,6 +116,11 @@ def create_argparser():
     parser.add_argument('--dataset', type=str, default="default",choices=["default","no_pointlike"])
     parser.add_argument('--data_processing', type=str, default="default",choices=["default","norm_max_pixel","min_max"])
     parser.add_argument('--loss_function', type=str, default="default",choices=["default","1_over_pixel","min_max","huber"])
+    parser.add_argument('--conf_path', type=str, default="confs/galaxy.yml")
+
+    partial_args, _ = parser.parse_known_args()
+    conf = yamlread(partial_args.conf_path)
+    parser.add_argument('--dataset_dir', type=str, default=conf["data"]["loc"][partial_args.dataset])
     # parser.add_argument('--loss_function', type=str, default="default",choices=["default","1_over_pixel","min_max","huber"])
 
     return parser

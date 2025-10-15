@@ -33,7 +33,7 @@ from . import galaxy_dataset
 
 class VIS_Cutouts(Dataset):
     
-    def __init__(self, files_dir, ids_file, transform=None, target_transform=None, set="train"):
+    def __init__(self, files_dir, ids_file, transform=None, target_transform=None, set="train", file_index=None):
         
         self.files_dir = files_dir
         with open(f"{files_dir}/{ids_file}",'r') as fp:
@@ -41,31 +41,41 @@ class VIS_Cutouts(Dataset):
             self.img_ids = load(fp)
         self.img_dir = files_dir
         self.npy_list = Path(files_dir).glob('*.npy')
-        # print(list(self.npy_list))
-        # assert False
+
         self.path_list = [str(x) for x in self.npy_list]
         print(self.path_list[:10])
         print("Full cutout dataset has ",1024*len(self.path_list)," images.")
         self.set = set
         import pickle
+        print(f"\n\n\n Running {set} set \n\n\n")
         if set == "train":
             with open(f"{files_dir}/train_set_files","rb") as fp:
                 b = pickle.load(fp)
             p_list = [f"{files_dir}/{x}" for x in b]
-            print(p_list[:20])
-            # assert False
+            print("train p_list:", p_list)
+            p_list = [x for x in p_list if x in self.path_list]
+            print("p_list[:20]:", p_list[:20])
             self.path_list = p_list
+
         elif set == "test":
             with open(f"{files_dir}/test_set_files","rb") as fp:
                 b = pickle.load(fp)
             p_list = [f"{files_dir}/{x}" for x in b]
-            print(p_list[:20])
+            print("test p_list:", p_list)
+            p_list = [x for x in p_list if x in self.path_list]
+            print("p_list[:20]:", p_list[:20])
             self.path_list = p_list
 
             #assert False
 
+        
+        if file_index is not None:
+            self.path_list = [f"{files_dir}/{file_index}.npy"]
+            print("about to load only: ", self.path_list)
 
         print("Used dataset has ",1024*len(self.path_list)," images.")
+
+        # assert False
         self.transform = transform
         self.target_transform = target_transform
 
@@ -77,9 +87,7 @@ class VIS_Cutouts(Dataset):
         if self.set != "noise":
             img_path = self.path_list[idx]
             idx_num = img_path[len(self.files_dir)+1:img_path.index(".")]
-            # print(img_path)
-            # print(idx," vs ",idx_num)
-            # assert False
+
             with open(img_path, 'rb') as fp:
                 image = np.load(fp)
 
@@ -89,6 +97,11 @@ class VIS_Cutouts(Dataset):
             noise_samples = 3
             mask_size = 5
             noise_steps = 60
+
+            print("guided_diffusion/image_datasets.py is saving to:")
+            print("noise_samples: ", noise_samples)
+            print("mask_size: ", mask_size)
+            print("noise_steps: ", noise_steps)
 
             subset_name = "all"
             split = "test"
@@ -108,38 +121,23 @@ class VIS_Cutouts(Dataset):
 
             test_ = abs(np.random.normal(0,1,(1024,128,128)).astype(np.float32))
         
-            # print(test_.min())
             all_o_copy = all_o.copy()
 
             nonzeros = [x for x in range(1024) if np.all(all_o_copy[x] > 0)]
 
-            # print(len(nonzeros))
-
-            # nonzero = all_o_copy > 0
-
             all_o_flattend = all_o_copy[nonzeros].flatten()
             all_o_flattend.sort()
-            # print(all_o_copy[nonzeros,:,:].shape)
-            rs = [all_o_flattend[x] for x in range(0,1024*25,32*25)]
 
-            # print(len(rs))
+            rs = [all_o_flattend[x] for x in range(0,1024*25,32*25)]
 
             for i in range(32):
                 for j in range(32):
                     test_[(i*32)+j] *= 5*rs[i]
 
-            # print(test_.shape)
-
             image = test_
             
             labels = [f"{x}" for x in range(1024)]
-        # img_max = np.max(image)
-        # img_min = np.min(image)
-        # image = (image-img_min) / (img_max - img_min)
-        # print("---")
-        # print(idx_num)
-        # print(len(labels))
-        # assert False
+
         if self.transform:
             image = self.transform(image)
         if self.target_transform:
@@ -147,11 +145,7 @@ class VIS_Cutouts(Dataset):
 
         B, H,W = image.shape
         image = image.view(B,1,H,W)
-        # print(image.shape)
-        # image = image.expand(-1,3,-1,-1)
-        # print(image.shape)
 
-        # assert False
         return image, labels
 
 
@@ -285,6 +279,7 @@ def load_data(
     random_flip=True,
     set="train",
     args=None,
+    file_index=None
 ):
     """
     For a dataset, create a generator over (images, kwargs) pairs.
@@ -305,12 +300,6 @@ def load_data(
     :param random_flip: if True, randomly flip the images for augmentation.
     """
     print("loading data...")
-    # dataset = GZDecals5(
-    #     "datasets/Decals", train=True, download=True, transform=None, target_transform=None
-    # )
-
-    # print("Finished...")
-    # assert False
 
     if not data_dir:
         raise ValueError("unspecified data directory")
@@ -338,17 +327,19 @@ def load_data(
     memory_before = torch.cuda.memory_allocated("cuda")
 
     dataset = VIS_Cutouts(
-        data_dir, ids_file, transform=transform, target_transform=None, set=set
+        data_dir, ids_file, transform=transform, target_transform=None, set=set, file_index=file_index
     )
     memory_after = torch.cuda.memory_allocated("cuda")
-    # latent_size = memory_after - memory_before
-    # print("after dataset: ",latent_size/(1024**3))
-    # print(f"Is Deterministic - workers=10: {deterministic}")
+
     if deterministic:
         print("Is Deterministic")
+        print("dataset:", dataset)
+        print("npy_files_at_once:", batch_size)
+
         loader = DataLoader(
             dataset, batch_size=batch_size, shuffle=False, num_workers=1, drop_last=True
         )
+        print("loader loaded...")
     else:
         print("Isnt Deterministic")
         loader = DataLoader(
