@@ -35,22 +35,24 @@ class VIS_Cutouts(Dataset):
         import pickle
         print(f"\n\n\n Running {set} set \n\n\n")
         if set == "train":
-            with open(f"{files_dir}/train_set_files","rb") as fp:
-                b = pickle.load(fp)
-            p_list = [f"{files_dir}/{x}" for x in b]
-            print("train p_list:", p_list)
-            p_list = [x for x in p_list if x in self.path_list]
-            print("p_list[:20]:", p_list[:20])
-            self.path_list = p_list
+            if os.path.isfile(f"{files_dir}/train_set_files"):
+                with open(f"{files_dir}/train_set_files","rb") as fp:
+                    b = pickle.load(fp)
+                p_list = [f"{files_dir}/{x}" for x in b]
+                print("train p_list:", p_list)
+                p_list = [x for x in p_list if x in self.path_list]
+                print("p_list[:20]:", p_list[:20])
+                self.path_list = p_list
 
         elif set == "test":
-            with open(f"{files_dir}/test_set_files","rb") as fp:
-                b = pickle.load(fp)
-            p_list = [f"{files_dir}/{x}" for x in b]
-            print("test p_list:", p_list)
-            p_list = [x for x in p_list if x in self.path_list]
-            print("p_list[:20]:", p_list[:20])
-            self.path_list = p_list
+            if os.path.isfile(f"{files_dir}/test_set_files"):
+                with open(f"{files_dir}/test_set_files","rb") as fp:
+                    b = pickle.load(fp)
+                p_list = [f"{files_dir}/{x}" for x in b]
+                print("test p_list:", p_list)
+                p_list = [x for x in p_list if x in self.path_list]
+                print("p_list[:20]:", p_list[:20])
+                self.path_list = p_list
 
             #assert False
 

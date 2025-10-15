@@ -152,10 +152,10 @@ def save_batches_from_tiles(cat_subset, split, chunk_id, total_chunks, batches_p
                 np.save(f, batch)
 
             if total_chunks > 1:
-                with open(f'{args.batch_dir}/batch_sources_{chunk_id}.json', 'w') as f:
+                with open(f'{args.batch_dir}/batch_source_{chunk_id}.json', 'w') as f:
                     dump(source_ids, f, indent=2)
             else:
-                with open(f'{args.batch_dir}/batch_sources_full.json', 'w') as f:
+                with open(f'{args.batch_dir}/batch_source_full.json', 'w') as f:
                     dump(source_ids, f, indent=2)
 
             b_idx += 1
@@ -172,10 +172,10 @@ def save_batches_from_tiles(cat_subset, split, chunk_id, total_chunks, batches_p
         np.save(f, batch)
         # print(f"{chunk_id} saving {b_idx}")
     if total_chunks > 1:
-        with open(f'{args.batch_dir}/batch_sources_{chunk_id}.json', 'w') as f:
+        with open(f'{args.batch_dir}/batch_source_{chunk_id}.json', 'w') as f:
             dump(source_ids, f, indent=2)
     else:
-        with open(f'{args.batch_dir}/batch_sources_full.json', 'w') as f:
+        with open(f'{args.batch_dir}/batch_source_full.json', 'w') as f:
             dump(source_ids, f, indent=2)
 
     return sum([len(source_ids[k]) for k in source_ids]), image_errors, missing_tile_ids
@@ -280,7 +280,7 @@ with mp.Pool(processes=num_processes) as pool:
                 combined_dict[j] = new_list
 
 
-        with open(f'{args.batch_dir}/batch_sources_full.json','w') as fp:
+        with open(f'{args.batch_dir}/batch_source_full.json','w') as fp:
             dump(combined_dict,fp, indent=2)
 
         full_json_amount = sum([len(combined_dict[k]) for k in combined_dict])

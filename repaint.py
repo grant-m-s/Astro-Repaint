@@ -87,7 +87,7 @@ def imread(path):
     return pil_image
     
 
-def main(conf: conf_mgt.Default_Conf_Repaint, progress = None, batch_size = None, file_index=None):
+def main(conf: conf_mgt.Default_Conf_Repaint, progress = None, batch_size = None, file_index=None, data_dir=None):
     print("Start", conf['name'])
 
     device = "cuda"
@@ -189,8 +189,14 @@ def main(conf: conf_mgt.Default_Conf_Repaint, progress = None, batch_size = None
 
     # dl = conf.get_dataloader(dset=dset, dsName=eval_name)
 
+    if data_dir == None:
+        data_dir = "data"
+    else:
+        if data_dir[-1] == '/':
+            data_dir = data_dir[:-1]
+
     dl = load_data(
-        data_dir="data",
+        data_dir=data_dir,
         ids_file="batch_source_full.json",
         batch_size=conf.data['eval']['paper_face_mask']['npy_files_at_once'],
         image_size=64,
@@ -200,7 +206,7 @@ def main(conf: conf_mgt.Default_Conf_Repaint, progress = None, batch_size = None
     
     print("data_loader: ", dl)
 
-    with open("data/batch_source_full.json",'r') as fp:
+    with open(f"{data_dir}/batch_source_full.json",'r') as fp:
         batch_ids = json.load(fp)
 
     print("batch_id keys: ",list(batch_ids.keys()))

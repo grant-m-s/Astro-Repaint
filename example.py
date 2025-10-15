@@ -456,7 +456,7 @@ class DiffusionInpaintUI:
 
         def worker():
             try:
-                for snapshot in main(conf_arg,self.progress, self.batch_size.value, self.file_index.value):
+                for snapshot in main(conf_arg,self.progress, self.batch_size.value, self.file_index.value, data_dir=self.dir_input.value):
                     self._delta_q.put(("snapshot", snapshot, None))
                 # on completion, pass total we saw (optional)
                 self._delta_q.put(("done", None, None))
