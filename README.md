@@ -144,7 +144,7 @@ or use the following bib entry:
 ````latex
 @ARTICLE{Stevens2025Q1,
        author = {{Euclid Collaboration: Stevens}, G. and {Fotopoulou}, S. and {Bremer}, M.N. and others},
-       title = "{Euclid Quick Data Release (Q1) Active galactic nuclei identification using diffusion-based inpainting of Euclid VIS images}",
+       title = {Euclid Quick Data Release (Q1) Active galactic nuclei identification using diffusion-based inpainting of Euclid VIS images},
       journal = {A\&A, in press (Euclid Q1 SI), \url{}},
      keywords = {Astrophysics - Astrophysics of Galaxies},
          year = 2025,
