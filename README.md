@@ -8,10 +8,7 @@ This code accomponies the paper:
 
 [Arxiv: 2503.15321](https://arxiv.org/abs/2503.15321) | [Euclid Q1 A\&A Special Issue](https://www.aanda.org/component/toc/?task=topic&id=2247) | [Euclid Q1 Data Release](https://www.euclid-ec.org/science/q1/)
 
-<img src="assets/542_0.gif" alt="drawing" width="150"/>
-<img src="assets/563_0.gif" alt="drawing" width="150"/>
-<img src="assets/628_0.gif" alt="drawing" width="150"/>
-<img src="assets/743_0.gif" alt="drawing" width="150"/>
+<img src="assets/542_0.gif" alt="drawing" width="150"/> <img src="assets/563_0.gif" alt="drawing" width="150"/> <img src="assets/628_0.gif" alt="drawing" width="150"/> <img src="assets/743_0.gif" alt="drawing" width="150"/>
 
 ---
 
