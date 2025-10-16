@@ -1,8 +1,16 @@
 # Astro-Repaint
 
 This code accomponies the paper:
+
 **Active galactic nuclei identification using diffusion-based inpainting of Euclid VIS images**
+
 *Euclid Collaboration: Stevens et al. (2025)*
+
+[Arxiv: 2503.15321](https://arxiv.org/abs/2503.15321) | [Euclid Q1 A\&A Special Issue](https://www.aanda.org/component/toc/?task=topic&id=2247) | [Euclid Q1 Data Release](https://www.euclid-ec.org/science/q1/)
+
+---
+
+Large parts of this codebase are the result of combining and streamlining the [Guided Diffusion]() and  [Repaint](https://github.com/andreas128/RePaint) repositories and so credit must go to the respective developers for most of the training and inpainting pipeline.
 
 ---
 
@@ -33,14 +41,14 @@ python create_batches.py -t 102157953 -c subset_id_tiles.fits -bs 1024 -p 32 -td
 
 ⚠️ **Note**: If a tile contains artefacts (e.g. solar interference), all cutouts in that batch will be affected. Single-tile batches are recommended for inference or testing only.
 
-The input parameters for the create_batches scripts are the following:
+The input parameters for the create_batches script are the following:
 
-  - **c**: The fits catalogue with all required sources (required).
-  - **bs**: The number of images within each created .npy file.
-  - **p**: The number of processes used to create the .npy files.
-  - **td**: The directory where all tiles are stored.
-  - **bd**: The directory where all .npy files will be saved.
-  - **t**: If t is specified, only sources from that tile will be saved to .npy files.
+  - **c**: (*catalogue*) The fits catalogue with all required sources (required).
+  - **bs**: (*batchsize*) The number of images within each created .npy file.
+  - **p**: (*processses*) The number of processes used to create the .npy files.
+  - **td**: (*tile_dir*) The directory where all tiles are stored.
+  - **bd**: (*batch_dir*) The directory where all .npy files will be saved.
+  - **t**: (*tile*) If t is specified, only sources from that tile will be saved to .npy files.
 
 ---
 
@@ -50,19 +58,17 @@ The specific model used in the paper can be downloaded here:
 
 Model weights (Google Drive): https://drive.google.com/file/d/1q6GFYnLUOyUPagZTozfX-zOk44a5vlje/view?usp=sharing
 
-Save the downloaded file model_best.pt into:
-
-training_tmp/
+Save the downloaded file model_best.pt into: `training_tmp/`.
 
 ### Interactive Dashboard
 
-You can perform interactive, one-click inpainting using a dashboard:
+You can perform interactive, one-click inpainting using our dashboard:
 
 ````bash
 panel serve example.py
 ````
 
-Then open your browser to: http://localhost:5006/example
+Then open your browser to: http://localhost:5006/example .
 
 Each completed batch automatically saves a results file in: `repaint_data/`
 
@@ -83,13 +89,13 @@ This command also checkpoints progress after each iteration, allowing pause-and-
 The input parameters for the inpainting scripts are the following:
 
   - **conf_path**: Path to configuration file. 
-  - **is**: The size of the square mask used for inpainting.
+  - **is**: (*inpaint_size*) The size of the square mask used for inpainting.
   - **t**: The number of inference timesteps. *Larger numbers will produce more resiliant outputs but will take longer per batch.*
-  - **js**: The number of resamples made in the repaint process (see repaint paper for details). *Larger numbers will produce more resiliant outputs but will take longer per batch.*
-  - **jl**: The number of steps jumped before resampling. *Smaller numbers will produce more resiliant outputs but will take longer per batch.*
-  - **bs**: The number of images to inpaint at once in an iteration. 
+  - **js**: (*jump_n_samples*) The number of resamples made in the repaint process (see repaint paper for details). *Larger numbers will produce more resiliant outputs but will take longer per batch.*
+  - **jl**: (*jump_length*) The number of steps jumped before resampling. *Smaller numbers will produce more resiliant outputs but will take longer per batch.*
+  - **bs**: (*batch_size*) The number of images to inpaint at once in an iteration. 
   
-  ⚠️ **Note**: Memory is main bottleneck for inference and so only increase the batchsize if you have sufficient GPU Memory.
+  ⚠️ **Note**: Memory is the main bottleneck for inference and so only increase the batchsize if you have sufficient GPU Memory.
 
 ---
 
@@ -98,7 +104,7 @@ The input parameters for the inpainting scripts are the following:
 To train a new model using the same parameters as in the paper:
 
 ````bash
-export PYTHONPATH=.; python scripts/image_train.py --num_channels 32 --num_res_blocks 1 --learn_sigma True --dropout 0.3 --diffusion_steps 4000 --noise_schedule cosine --lr 1e-4 --batch_size 1 --image_size 64 --loss_function "1_over_pixel"
+export PYTHONPATH=.; python scripts/image_train.py --num_channels 32 --num_res_blocks 3 --learn_sigma True --dropout 0.3 --diffusion_steps 4000 --noise_schedule cosine --lr 1e-4 --batch_size 1 --image_size 64 --loss_function "1_over_pixel"
 ````
 
 After training, update the model path for inpainting in `confs/galaxy.yml`, setting the `model_path` field to point to your newly trained model.
@@ -118,7 +124,7 @@ The specific input parameters we have added to the training script are the follo
 ## 4. Notes
 
 - The diffusion and inpainting pipelines correspond to Sections 2 - 3 of the Euclid paper.  
-- The "1_over_pixel" loss corresponds to the normalised MSE + VLB hybrid described in Eq. (9) of the manuscript.  
+- The "1_over_pixel" loss corresponds to the normalised MSE + VLB hybrid described in Eq. (9) of the paper.  
 - Data creation uses raw VIS pixel values (no rescaling), as detailed in Section 3.2 (Reconstruction Rescaling) of the paper.  
 - Inpainting is implemented via the Repaint algorithm (Lugmayr et al. 2022), ensuring consistent conditioning between masked and unmasked pixels.
 
