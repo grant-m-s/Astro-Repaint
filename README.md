@@ -8,6 +8,11 @@ This code accomponies the paper:
 
 [Arxiv: 2503.15321](https://arxiv.org/abs/2503.15321) | [Euclid Q1 A\&A Special Issue](https://www.aanda.org/component/toc/?task=topic&id=2247) | [Euclid Q1 Data Release](https://www.euclid-ec.org/science/q1/)
 
+<img src="assets/542_0.gif" alt="drawing" width="150"/>
+<img src="assets/563_0.gif" alt="drawing" width="150"/>
+<img src="assets/628_0.gif" alt="drawing" width="150"/>
+<img src="assets/743_0.gif" alt="drawing" width="150"/>
+
 ---
 
 Large parts of this codebase are the result of combining and streamlining the [Guided Diffusion]() and  [Repaint](https://github.com/andreas128/RePaint) repositories and so credit must go to the respective developers for most of the training and inpainting pipeline.
@@ -54,6 +59,9 @@ The input parameters for the create_batches script are the following:
 
 ## 2. Inpainting
 
+![image](assets/repaint_pipeline_v2.svg)
+
+
 The specific model used in the paper can be downloaded here:
 
 Model weights (Google Drive): https://drive.google.com/file/d/1q6GFYnLUOyUPagZTozfX-zOk44a5vlje/view?usp=sharing
@@ -96,6 +104,10 @@ The input parameters for the inpainting scripts are the following:
   - **bs**: (*batch_size*) The number of images to inpaint at once in an iteration. 
   
   ⚠️ **Note**: Memory is the main bottleneck for inference and so only increase the batchsize if you have sufficient GPU Memory.
+
+![image](assets/2643931528666914057_5.svg)
+![image](assets/2733948397649875934_5.svg)
+![image](assets/-621286250473882410_5.svg)
 
 ---
 
