@@ -1,6 +1,6 @@
 # Astro-Repaint
 
-This code accomponies the paper:
+This code accompanies the paper:
 
 **Active galactic nuclei identification using diffusion-based inpainting of Euclid VIS images**
 
@@ -47,7 +47,7 @@ The input parameters for the create_batches script are the following:
 
   - **c**: (*catalogue*) The fits catalogue with all required sources (required).
   - **bs**: (*batchsize*) The number of images within each created .npy file.
-  - **p**: (*processses*) The number of processes used to create the .npy files.
+  - **p**: (*processes*) The number of processes used to create the .npy files.
   - **td**: (*tile_dir*) The directory where all tiles are stored.
   - **bd**: (*batch_dir*) The directory where all .npy files will be saved.
   - **t**: (*tile*) If t is specified, only sources from that tile will be saved to .npy files.
@@ -95,9 +95,9 @@ The input parameters for the inpainting scripts are the following:
 
   - **conf_path**: Path to configuration file. 
   - **is**: (*inpaint_size*) The size of the square mask used for inpainting.
-  - **t**: The number of inference timesteps. *Larger numbers will produce more resiliant outputs but will take longer per batch.*
-  - **js**: (*jump_n_samples*) The number of resamples made in the repaint process (see repaint paper for details). *Larger numbers will produce more resiliant outputs but will take longer per batch.*
-  - **jl**: (*jump_length*) The number of steps jumped before resampling. *Smaller numbers will produce more resiliant outputs but will take longer per batch.*
+  - **t**: The number of inference timesteps. *Larger numbers will produce more resilient outputs but will take longer per batch.*
+  - **js**: (*jump_n_samples*) The number of resamples made in the repaint process (see repaint paper for details). *Larger numbers will produce more resilient outputs but will take longer per batch.*
+  - **jl**: (*jump_length*) The number of steps jumped before resampling. *Smaller numbers will produce more resilient outputs but will take longer per batch.*
   - **bs**: (*batch_size*) The number of images to inpaint at once in an iteration. 
   
   ⚠️ **Note**: Memory is the main bottleneck for inference and so only increase the batchsize if you have sufficient GPU Memory.
